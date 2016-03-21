@@ -4,6 +4,7 @@
 Shopper = function(x, y, sprite, width, height){
     Entity.call(this, x, y, sprite, width, height);
     this.shopping_list = [];
+    this.basket = [];
     this.difficulty = 0.5;
     this.stress = 0;
     this.generate_goods();
@@ -20,5 +21,23 @@ Shopper.prototype.generate_goods = function(){
     this.shopping_list = [random_good()];
     while (Math.random() <= this.difficulty - 0.1 * this.shopping_list.length){
         this.shopping_list.push(random_good())
+    }
+};
+
+Shopper.prototype.acquire_good = function(good){
+    /**
+     * Give a shopper a good.
+     */
+    this.basket.push(good)
+};
+
+Shopper.prototype.pay_for_good = function (good){
+    /**
+     * pays for a good the shopper currently has in their inventory.
+     */
+    for (var i = 0; i < this.basket.length; i++){
+        if (this.basket[i] == good){
+            good.paid_for = true;
+        }
     }
 };

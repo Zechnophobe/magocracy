@@ -1,4 +1,4 @@
-var Entity = function(x, y, sprite, width, height, display){
+var Entity = function(x, y, width, height, display){
 
     this.speed_x = 0;
     this.speed_y = 0;
@@ -19,9 +19,6 @@ var Entity = function(x, y, sprite, width, height, display){
     this.loc_x = x;
     this.loc_y = y;
 
-
-    this.sprite = sprite;
-
     this.width = width;
     this.height = height;
 
@@ -34,6 +31,7 @@ var Entity = function(x, y, sprite, width, height, display){
     this.display = display;
     window.dispatcher.listen('tick', this.update, this);
 };
+Entity.prototype.sprite = null;
 
 Entity.prototype.update_acceleration = function(){
     var decay_direction = 1;
@@ -115,6 +113,12 @@ Entity.prototype.make_selected = function(){
     window.dispatcher.release('keyup:right');
     window.dispatcher.release('keyup:up');
     window.dispatcher.release('keyup:down');
+
+    window.dispatcher.release('keydown:left');
+    window.dispatcher.release('keydown:right');
+    window.dispatcher.release('keydown:up');
+    window.dispatcher.release('keydown:down');
+
     window.dispatcher.listen('keydown:up', this.start_accelerate_up, this);
     window.dispatcher.listen('keydown:down', this.start_accelerate_down, this);
     window.dispatcher.listen('keydown:left', this.start_accelerate_left, this);

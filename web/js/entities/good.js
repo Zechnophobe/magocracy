@@ -3,23 +3,40 @@
  */
 
 
-Good = function(sprite, good_name, cost, rarity){
-    this.good_name = good_name;
-    this.cost = cost;
-    this.rarity = rarity;
-    Entity.call(this, 0, 0, sprite, 0, 0, false)
+Good = function(){
+    Entity.call(this, 0, 0, 50, 50, false)
 };
 extend(Good, Entity);
+Good.prototype.good_name = 'Unnamed Good';
+Good.prototype.cost = 0;
+Good.prototype.rarity = 0;
+Good.prototype.paid_for = false;
 
 TrickleMeElmer = function(){
-    Good.call(this, graphics.WATER_BLOCK, 'Trickle Me Elmer', 100, 3);
+    this.sprite = graphics.WATER_BLOCK;
+    Good.call(this);
+    this.good_name = 'Trickle Me Elmer';
+    this.cost = 100;
+    this.rarity = 10;
 };
 extend(TrickleMeElmer, Good);
+TrickleMeElmer.prototype.good_name = 'Trickle Me Elmer';
+TrickleMeElmer.prototype.cost = 100;
+TrickleMeElmer.prototype.rarity = 10;
+TrickleMeElmer.prototype.sprite = graphics.WATER_BLOCK;
 
 FancyWatch = function(){
-    Good.call(this, graphics.PRINCESS_SPRITE, 'Fancy Watch', 120, 1);
+    this.sprite = graphics.GRASS_BLOCK;
+    Good.call(this);
+    this.good_name = 'Fancy Watch';
+    this.cost = 300;
+    this.rarity = 2;
 };
 extend(FancyWatch, Good);
+FancyWatch.prototype.good_name = 'Fancy Watch';
+FancyWatch.prototype.cost = 300;
+FancyWatch.prototype.rarity = 2;
+FancyWatch.prototype.sprite = graphics.GRASS_BLOCK;
 
 
 GoodList = [
@@ -28,5 +45,17 @@ GoodList = [
 ];
 
 random_good = function(){
-  return new GoodList[Math.floor(Math.random() * GoodList.length)]
+    var rarity_sum = 0;
+    for (var i = 0; i < GoodList.length; i++){
+        rarity_sum += GoodList[i].prototype.rarity;
+    }
+    var random_value = rand(0, rarity_sum);
+
+    var finder_sum = 0;
+    for (i = 0; i < GoodList.length; i++){
+        finder_sum += GoodList[i].prototype.rarity;
+        if (finder_sum > random_value){
+            return new GoodList[i];
+        }
+    }
 };
