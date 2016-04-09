@@ -8,7 +8,7 @@ Day = function(){
 };
 
 Day.prototype.start_time = 10;
-Day.prototype.closing_time = 4;
+Day.prototype.closing_time = 16;
 Day.prototype.name = undefined;
 Day.prototype.fully_staffed = function(){
     return self.scheduled_workers.length >= 4;

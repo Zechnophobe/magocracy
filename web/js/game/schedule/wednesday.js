@@ -11,4 +11,4 @@ Wednesday = function (){
 extend(Wednesday, Day);
 Wednesday.prototype.name = 'Wednesday';
 Wednesday.prototype.start_time = 8;
-Wednesday.prototype.closing_time = 5;
+Wednesday.prototype.closing_time = 17;
