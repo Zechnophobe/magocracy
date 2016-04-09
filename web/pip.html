@@ -64,7 +64,8 @@
 
 				dude_sprite = new createjs.SpriteSheet({
 					animations: {
-						walk: [0,28]
+						walk: [0,18],
+						shimmy: [19,28]
 					},
 					images: ["assets/images/dude_sprite_opt.png"],
 					frames: {
@@ -75,24 +76,18 @@
 					}
 				});
 
-				dude = new createjs.Sprite(dude_sprite, "walk");
+				dude = new createjs.Sprite(dude_sprite, 'walk');
 
 				dude.x = 300;
 				dude.y = 400;
-				//dude.gotoAndPlay("walk");
 
 				stage.addChild( dude );
+				setTimeout(function(){
+					dude.gotoAndPlay("shimmy");
+				}, 8000);
+				createjs.Tween.get( dude, { loop: true}).to({y:100},4000, createjs.Ease.linear);
 
-				createjs.Tween.get( dude, { loop: true })
-					.to({y:100},4000, createjs.Ease.linear)
-					.to({rotation:90}, 300, createjs.Ease.linear)
-					.to({x:600},4000, createjs.Ease.linear)
-					.to({rotation:180}, 300, createjs.Ease.linear)
-					.to({y:400},4000, createjs.Ease.linear)
-					.to({rotation:270}, 300, createjs.Ease.linear)
-					.to({x:300},4000, createjs.Ease.linear)
-					.to({rotation:359}, 300, createjs.Ease.linear);
-			
+				createjs.Tween.get( dude, { loop: true }).to({rotation:90}, 2000, createjs.Ease.linear)
 			}
 
 		</script>

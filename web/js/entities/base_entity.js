@@ -1,23 +1,7 @@
 var Entity = function(x, y, width, height, display){
 
-    this.speed_x = 0;
-    this.speed_y = 0;
-
-    this.acceleration_x = 0;
-    this.acceleration_y = 0;
-
-    this.max_speed = 10;
-    this.max_acceleration = .05;
-
-    this.impulse_up = false;
-    this.impulse_down = false;
-    this.impulse_left = false;
-    this.impulse_right = false;
-
-    this.impulse_factor = .01;
-
-    this.loc_x = x;
-    this.loc_y = y;
+    this.x = x;
+    this.y = y;
 
     this.width = width;
     this.height = height;
@@ -90,4 +74,46 @@ Entity.prototype.make_selected = function(){
     window.dispatcher.listen('keyup:down', this.stop_accelerate_down, this);
     window.dispatcher.listen('keyup:left', this.stop_accelerate_left, this);
     window.dispatcher.listen('keyup:right', this.stop_accelerate_right, this);
+};
+
+
+Entity.prototype.go_to_location =  function(destination_x, destination_y){
+    this.rotate_towards(destination_x, destination_y);
+    this.animate_to(destination_x, destination_y);
+};
+
+Entity.prototype.rotate_towards = function(x, y){
+    var angle = Math.atan2(y - this.y, x - this.x);
+    if (angle < 0){
+        angle += 360;
+    }
+    this.sprite.rotate_to(angle);
+};
+
+var BFFSprite = function(sprite_location){
+    var animation = new createjs.SpriteSheet({
+        animations: {
+            walk: [0,28]
+        },
+        images: [sprite_location],
+        frames: {
+            regX: 50,
+            regY: 50,
+            height: 100,
+            width: 100
+        }
+    });
+    this.sprite = new createjs.Sprite(animation);
+};
+
+BFFSprite.prototype.rotation = function(new_rotation){
+    if (new_rotation === undefined){
+        return this.sprite.rotation;
+    }
+    this.sprite.rotation = new_rotation;
+
+};
+
+BFFSprite.prototype.rotate_to = function(new_rotation){
+    createjs.Tween.get( this.sprite, { loop: false }).to({rotation:new_rotation}, 2000, createjs.Ease.linear)
 };

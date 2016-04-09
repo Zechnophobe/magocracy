@@ -11,7 +11,7 @@ Renderer.prototype.render_entity = function(entity){
     var image = Resources.get(entity.sprite);
     // In case our image isn't loaded yet, just ignore the render call. We'll get there.
     if (image){
-        this.ctx.drawImage(image, entity.loc_x, entity.loc_y)
+        this.ctx.drawImage(image, entity.x, entity.y)
     }
 };
 
