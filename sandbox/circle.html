@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<title>Draw circles</title>
+	<style type="text/css">
+		body {
+			background: #333;
+		}
+
+		canvas {
+			background: #888;
+			border: black solid 3px;
+		}
+
+	</style>
+
+	<!-- create js links -->
+	<script src="https://code.createjs.com/easeljs-0.8.2.min.js"></script>
+	<script src="https://code.createjs.com/tweenjs-0.6.2.min.js"></script>
+	<script src="https://code.createjs.com/soundjs-0.6.2.min.js"></script>
+	<script src="https://code.createjs.com/preloadjs-0.6.2.min.js"></script>
+
+
+	<script type="text/javascript">
+		// global vars
+		var stage;
+		var drag = false;
+
+		// init: called on body load
+		function init() {
+			setupStage();
+			stage.addEventListener("stagemousedown", startDrag);	
+
+		}
+
+		// create the stage and the ticker
+		function setupStage() {
+			stage = new createjs.Stage( document.getElementById("vangogh"));
+			createjs.Ticker.setFPS(30);
+			createjs.Ticker.addEventListener("tick", tick);
+			stage.mouseMoveOutside = true;
+		}
+
+		function startDrag(e){
+			stage.addEventListener("stagemousemove", drawBubble);
+			stage.addEventListener("stagemouseup", stopDrag);
+			drag = true;
+		}
+
+		function stopDrag(e){
+			stage.removeEventListener("stagemouseup", stopDrag);
+			stage.removeEventListener("stagemousemove", drawBubble);
+			drag = false;
+		}
+
+		function drawBubble(e){
+			if(drag == true){
+				var circle = new createjs.Shape();
+				circle.graphics.beginFill("#FFF").drawCircle(0,0,Math.random() * 10);
+				circle.x = stage.mouseX;
+				circle.y = stage.mouseY;
+				stage.addChild(circle);
+
+				var alphie = Math.random();
+				circle.alpha = alphie;
+
+				createjs.Tween.get(circle)
+					.to({alpha:0},1000, createjs.Ease.getPowInOut(4))
+					.call(function (e){
+						stage.removeChild(this);
+					})
+				
+			}
+		}
+
+		// the tick function
+		function tick() {
+			
+			stage.update();
+			//console.log(stage.getNumChildren());
+		}
+
+	</script>
+</head>
+<body onload="init();">
+	<canvas id="vangogh" width="980" height="700">
+		Canvas is not supported :(
+	</canvas>
+</body>
+</html>
