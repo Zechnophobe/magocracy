@@ -1,16 +1,19 @@
 /**
  * Created by jeremyblack on 2/5/16.
  */
-Shopper = function(x, y, sprite, width, height){
-    Entity.call(this, x, y, sprite, width, height);
+Shopper = function(x, y, width, height){
+    Entity.call(this, x, y, width, height, true);
     this.shopping_list = [];
     this.basket = [];
     this.difficulty = 0.5;
     this.stress = 0;
     this.generate_goods();
+    this.sprite = new BFFSprite(graphics.DUDE);
 };
 
+
 extend(Shopper, Entity);
+Shopper.prototype.speed = 120;
 
 Shopper.prototype.generate_goods = function(){
     /**

@@ -13,3 +13,7 @@ document.addEventListener('keydown', function(e) {
     e.preventDefault();
     window.dispatcher.trigger('keydown:' + window.allowedKeys[e.keyCode])
 });
+document.addEventListener('mouseup', function(e) {
+    e.preventDefault();
+    window.dispatcher.trigger('mouseup', e)
+});

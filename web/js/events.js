@@ -32,4 +32,11 @@ Dispatcher.prototype.release = function(event){
     this.listeners[event] = [];
 };
 
+Dispatcher.prototype.release_event = function(event, callback){
+    var index = this.listeners[event].indexOf(callback);
+    if (index > -1){
+        this.listeners[event].splice(index, 1);
+    }
+};
+
 window.dispatcher = new Dispatcher();

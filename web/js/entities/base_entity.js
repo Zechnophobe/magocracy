@@ -2,6 +2,9 @@ var Entity = function(x, y, width, height, display){
 
     this.x = x;
     this.y = y;
+    this.destination_x = undefined;
+    this.destination_y = undefined;
+    this.destination_node = undefined;
 
     this.width = width;
     this.height = height;
@@ -12,31 +15,55 @@ var Entity = function(x, y, width, height, display){
     // if an entity collides, that means it cannot move 'onto' something else that collides.
     this.collides = true;
 
+    // Whether this entity should actually show up visually.
     this.display = display;
     window.dispatcher.listen('tick', this.update, this);
 };
 
 Entity.prototype.sprite = null;
 
+Entity.prototype.speed = 0;
+
 Entity.prototype.update = function(timedelta){
     this.render()
 };
 
+Entity.prototype.arrive_at_destination = function(){
+    if (this.destination_node !== undefined){
+        this.calculate_route(this.destination_node);
+    }
+};
+
 Entity.prototype.render = function(){
-    if (this.display){
-        window.renderer.render_entity(this);
+    if (this.destination_x != undefined) {
+        if (this.x != this.destination_x || this.y != this.destination_y){
+            this.continue_move(); // TODO
+        } else {
+            this.destination_x = undefined;
+            this.destination_y = undefined;
+            this.arrive_at_destination();
+        }
     }
 
 };
 
 Entity.prototype.in_region = function(region){
-  return false;
+    return true;
+};
+
+Entity.prototype.at_destination_node = function(){
+    return false;
 };
 
 
-Entity.prototype.go_to_node = function(target_node){
+Entity.prototype.calculate_route = function(target_node){
+    if (this.at_destination_node()){
+        this.destination_node = undefined;
+        return;
+    }
     if (this.in_region(target_node.region())) {
-        this.go_to_location(target_node.x, target_node.y);
+        this.destination_x = target_node.x;
+        this.destination_y = target_node.y;
         return;
     }
     var closest = null;
@@ -48,38 +75,26 @@ Entity.prototype.go_to_node = function(target_node){
         }
     }
     if (closest !== null){
-        this.go_to_location(closest.x, closest.y);
+        this.destination_x = closest.x;
+        this.destination_y = closest.y;
         return;
     }
     console.log("ERROR: Tried to go to node with no valid entry nodes." + target_node);
 };
 
 Entity.prototype.make_selected = function(){
-    window.dispatcher.release('keyup:left');
-    window.dispatcher.release('keyup:right');
-    window.dispatcher.release('keyup:up');
-    window.dispatcher.release('keyup:down');
-
-    window.dispatcher.release('keydown:left');
-    window.dispatcher.release('keydown:right');
-    window.dispatcher.release('keydown:up');
-    window.dispatcher.release('keydown:down');
-
-    window.dispatcher.listen('keydown:up', this.start_accelerate_up, this);
-    window.dispatcher.listen('keydown:down', this.start_accelerate_down, this);
-    window.dispatcher.listen('keydown:left', this.start_accelerate_left, this);
-    window.dispatcher.listen('keydown:right', this.start_accelerate_right, this);
-
-    window.dispatcher.listen('keyup:up', this.stop_accelerate_up, this);
-    window.dispatcher.listen('keyup:down', this.stop_accelerate_down, this);
-    window.dispatcher.listen('keyup:left', this.stop_accelerate_left, this);
-    window.dispatcher.listen('keyup:right', this.stop_accelerate_right, this);
+    window.dispatcher.release_event('mouseup', this.clicked);
+    window.dispatcher.listen('mouseup', this.clicked, this);
 };
 
+Entity.prototype.clicked = function(event){
+    this.destination_x = event.x;
+    this.destination_y = event.y;
+};
 
-Entity.prototype.go_to_location =  function(destination_x, destination_y){
-    this.rotate_towards(destination_x, destination_y);
-    this.animate_to(destination_x, destination_y);
+Entity.prototype.continue_move =  function(){
+    this.rotate_towards(this.destination_x, this.destination_y);
+    this.animate_to(this.destination_x, this.destination_y);
 };
 
 Entity.prototype.rotate_towards = function(x, y){
@@ -88,6 +103,10 @@ Entity.prototype.rotate_towards = function(x, y){
         angle += 360;
     }
     this.sprite.rotate_to(angle);
+};
+
+Entity.prototype.animate_to = function(x, y){
+    this.sprite.go_to(x, y)
 };
 
 var BFFSprite = function(sprite_location){
@@ -115,5 +134,9 @@ BFFSprite.prototype.rotation = function(new_rotation){
 };
 
 BFFSprite.prototype.rotate_to = function(new_rotation){
-    createjs.Tween.get( this.sprite, { loop: false }).to({rotation:new_rotation}, 2000, createjs.Ease.linear)
+    createjs.Tween.get( this.sprite, { loop: false }).to({rotation:new_rotation}, 500, createjs.Ease.linear);
+};
+
+BFFSprite.prototype.go_to = function(x, y, interval){
+    createjs.Tween.get( this.sprite, { loop: false}).to({y:y, x:x}, interval, createjs.Ease.linear);
 };

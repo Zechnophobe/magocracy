@@ -77,6 +77,7 @@
 				});
 
 				dude = new createjs.Sprite(dude_sprite, 'walk');
+				dude.custom_thing = 0;
 
 				dude.x = 300;
 				dude.y = 400;
@@ -87,7 +88,14 @@
 				}, 8000);
 				createjs.Tween.get( dude, { loop: true}).to({y:100},4000, createjs.Ease.linear);
 
-				createjs.Tween.get( dude, { loop: true }).to({rotation:90}, 2000, createjs.Ease.linear)
+				createjs.Tween.get( dude, { loop: true }).to({rotation:90}, 4000, createjs.Ease.linear)
+				createjs.Tween.get( dude, { loop: true }).to({custom_thing:100}, 1000, createjs.Ease.linear)
+
+				setInterval(function(){
+					console.log(dude.custom_thing);
+					console.log(dude.rotation);
+				}, 200);
+
 			}
 
 		</script>
