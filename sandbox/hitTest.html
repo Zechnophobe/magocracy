@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<title>HIT TEST</title>
+	<style type="text/css">
+		body {
+			background: #333;
+		}
+
+		canvas {
+			background: #aaa;
+			border: black solid 3px;
+		}
+
+	</style>
+
+	<!-- create js links -->
+	<script src="https://code.createjs.com/easeljs-0.8.2.min.js"></script>
+	<script src="https://code.createjs.com/tweenjs-0.6.2.min.js"></script>
+	<script src="https://code.createjs.com/soundjs-0.6.2.min.js"></script>
+	<script src="https://code.createjs.com/preloadjs-0.6.2.min.js"></script>
+
+
+	<script type="text/javascript">
+		// global vars
+		var stage;
+		var shapes = [];
+		var slots = [];
+		var score = 0;
+
+		// init: called on body load
+		function init() {
+			setupStage();	
+			buildShapes();
+			setBlocks();
+			startGame();		
+		}
+
+		// create the stage and the ticker
+		function setupStage() {
+			stage = new createjs.Stage( document.getElementById("vangogh"));
+			//stage.enableMouseOver();
+		}
+
+		function buildShapes() {
+			var colors = ["blue", "red", "green", "yellow"];
+			var i, shape, slot;
+
+			for( i = 0 ; i < colors.length; i++){
+				// slots
+				slot = new createjs.Shape();
+				slot.graphics.beginStroke(colors[i]);
+				slot.graphics.beginFill("#fff");
+				slot.graphics.drawRect(0,0,100,100);
+				slot.regX = slot.regY = 50;
+
+				// we create a key so we can match the same-color block
+				//  to this slot
+				slot.key = i;
+
+				slot.x = (i*130) + 100;
+				slot.y = 80;
+				stage.addChild(slot);
+				slots.push(slot);
+
+				// shapes
+				shape = new createjs.Shape();
+				shape.graphics.beginFill(colors[i]);
+				shape.graphics.drawRect(0, 0, 100, 100);
+				shape.regX = shape.regY = 50;
+				shape.key = i;
+				shapes.push(shape);
+			}
+		}
+
+		function setBlocks(){
+			var i, randy, block;
+			var len = shapes.length;
+			for( i = 0 ; i < len ; i++ ){
+				// every day I'm shufflin'
+				randy = Math.floor( Math.random() * shapes.length );
+				block = shapes[randy];
+
+				// set starting position so if the user is wrong,
+				//  we can reset the block
+				block.homeX = (i * 130) + 100;
+				block.homeY = 320;
+				block.x = block.homeX;
+				block.y = block.homeY;
+
+				block.addEventListener("mousedown", startDrag);
+				stage.addChild(block);
+
+				// then we remove it from the array and, er, sew the 
+				//    array closed (as it were)
+				shapes.splice(randy, 1);
+			}
+		}
+
+		function startDrag(e){
+			var shape = e.target;
+			var slot = slots[shape.key];
+			var myTween;
+
+			stage.setChildIndex( shape, stage.getNumChildren()-1 );
+			// this is also where we'd animate the toy, were we
+			//   so inclined
+			//myTween = createjs.Tween.get(shape, {override:true, loop:true})
+				//.to({rotation:180}, 1500, createjs.Ease.quadOut);
+
+			stage.addEventListener( "stagemousemove", function (e) {
+				shape.x = e.stageX;
+				shape.y = e.stageY;
+			});
+
+			stage.addEventListener( "stagemouseup", function (e) {
+				stage.removeAllEventListeners();
+				var pt = slot.globalToLocal(stage.mouseX, stage.mouseY);
+				if (shape.hitTest(pt.x, pt.y)){
+					shape.removeEventListener("mousedown", startDrag);
+					score++;
+					createjs.Tween.get(shape)
+						.to({x:slot.x, y:slot.y},200, createjs.Ease.quadOut)
+						.call(checkGame);
+						//.call(stopTween,[shape]);
+				} 
+				else {
+					createjs.Tween.get(shape)
+						.to({x:shape.homeX, y:shape.homeY}, 500, createjs.Ease.quadOut);
+						//.call(stopTween, [shape]);
+				}
+
+				// and somewhere in here, we stop animating the toy-- 
+				//  as a callback when it lands
+				//function stopTween(shape){
+					//createjs.Tween.get(shape, {override:false})
+					//	.to({rotation:180}, 200, createjs.Ease.quadOut);
+					//myTween.to({rotation:0}, 1, createjs.Ease.quadOut);
+					//}
+
+			});
+		}
+
+		function checkGame(){
+			if(score==4){
+				alert("You win!");
+			}
+		}
+
+		// start the game
+		function startGame() {
+			createjs.Ticker.setFPS(30);
+			createjs.Ticker.addEventListener("tick", tick);
+		}
+
+		// the tick function
+		function tick() {
+			stage.update();
+		}
+
+	</script>
+</head>
+<body onload="init();">
+	<canvas id="vangogh" width="980" height="700">
+		Canvas is not supported :(
+	</canvas>
+</body>
+</html>

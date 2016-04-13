@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+	
+	<head>
+		
+		<title>HTML5 Example</title>
+
+		<style>
+			body {
+				background: #000;
+			}
+			canvas {
+				background: #333;
+			}
+		</style>
+
+
+		<!-- create js links -->
+		<script src="https://code.createjs.com/easeljs-0.8.2.min.js"></script>
+		<script src="https://code.createjs.com/tweenjs-0.6.2.min.js"></script>
+		<script src="https://code.createjs.com/soundjs-0.6.2.min.js"></script>
+		<script src="https://code.createjs.com/preloadjs-0.6.2.min.js"></script>
+
+		<script type="text/javascript">
+			var stage;
+
+			function init() {
+				var foo = document.getElementById("foo");
+				stage = new createjs.Stage(foo);
+				var ss = new createjs.SpriteSheet({
+					animations: {
+						lope: [0,15]
+					},
+					images: ["loper.png"],
+					frames: {
+						regX: 75,
+						regY: 75,
+						height: 157,
+						width: 153
+					}
+				});
+
+				loper = new createjs.Sprite(ss);
+				direction = 1;
+
+				loper.x = -150;
+				loper.y = 100;
+				stage.addChild(loper);
+				loper.gotoAndPlay("lope");
+
+
+				createjs.Ticker.setFPS(20);
+				createjs.Ticker.addEventListener("tick", tick);
+
+				function tick (){
+					loper.x+= direction* 10;
+					if( loper.x >= 500 || loper.x <-175){
+						direction *= -1;
+						loper.scaleX *= -1;
+					}
+
+					if( direction == -1 ){
+						loper.y = 200;
+					} else {
+						loper.y =100;
+					}
+
+					stage.update();
+				}
+			
+			}
+
+		</script>
+
+	</head>
+
+	<body onload="init()">
+		<canvas id="foo" width="400" height="400"></canvas>
+		
+		
+	</body>
+
+</html>
