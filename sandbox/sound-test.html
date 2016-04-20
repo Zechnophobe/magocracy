@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+
+	<title>Sound Test</title>
+
+	<style type="text/css">
+		body {
+			background: #333;
+		}
+	</style>
+
+	<!-- soundjs link -->
+	<script src="https://code.createjs.com/soundjs-0.6.2.min.js"></script>
+
+	<script type="text/javascript">
+
+		var soundID = "pop";
+		var mySound = "sounds/pop.mp3";
+		var poppy;
+
+		function loadSound () {
+		  poppy = createjs.Sound.registerSound(mySound, soundID);
+		  console.log(poppy);
+		}
+
+		function handleClick () {
+			createjs.Sound.play(soundID);
+			if(createjs.Sound.loadComplete(mySound)) {
+			  	createjs.Sound.play(mySound);
+			  	console.log("pop");
+			}
+			poppy.play();
+			
+		}
+
+	</script>
+</head>
+
+
+<body onload="loadSound();">
+	<button onclick="handleClick();">Play Sound</button>
+</body>
+
+
+</html>

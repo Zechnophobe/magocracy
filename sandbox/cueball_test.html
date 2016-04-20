@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<title>TITLE</title>
+	<style type="text/css">
+		body {
+			background: #333;
+		}
+
+		canvas {
+			background: #aaa;
+			border: black solid 3px;
+		}
+
+	</style>
+
+	<!-- create js links -->
+	<script src="https://code.createjs.com/easeljs-0.8.2.min.js"></script>
+	<script src="https://code.createjs.com/tweenjs-0.6.2.min.js"></script>
+	<script src="https://code.createjs.com/soundjs-0.6.2.min.js"></script>
+	<script src="https://code.createjs.com/preloadjs-0.6.2.min.js"></script>
+
+
+	<script type="text/javascript">
+		// global vars
+		var stage;
+		var canvas;
+		var cueball;
+		var rad;
+		var soundID;
+		var mySound;
+
+		// init: called on body load
+		function init() {
+			canvas =document.getElementById("vangogh"); 
+			stage = new createjs.Stage( canvas );	
+
+			cueball = new createjs.Shape();
+			rad = 25;
+			cueball.graphics.beginFill("#FFF");
+			cueball.graphics.drawCircle(0, 0, rad);
+			cueball.x = canvas.width/2;
+			cueball.y = canvas.height/2;
+			stage.addChild(cueball);
+
+			//I'm making these properties up
+			cueball.xDir = cueball.yDir = 1;
+			cueball.xSpeed = 5;
+			cueball.ySpeed = 10;
+
+			// sound
+			soundID = "pop";
+			mySound = createjs.Sound.createInstance("soundID");
+			createjs.Sound.registerSound("sounds/pop.mp3", soundID);
+			mySound.addEventListener("fieload", handleComplete);
+
+			function handleComplete(e){
+				console.log("sound loaded");
+				mySound.play();
+			}
+
+			// create the ticker
+			createjs.Ticker.setFPS(30);
+			createjs.Ticker.addEventListener("tick", tick);
+		}
+
+
+
+		function playSound(){
+			createjs.Sound.play(soundID);
+		}
+
+		// the tick function
+		function tick() {
+			stage.update();
+
+			if( cueball.x - rad <= 0 || 
+				cueball.x + rad >= canvas.width){
+				cueball.xDir*= -1;
+				playSound();
+			}
+			if( cueball.y - rad/2 <= 0 || 
+				cueball.y + rad/2 >= canvas.height){
+				cueball.yDir*= -1;
+				playSound();
+			}
+
+			cueball.x += cueball.xSpeed * cueball.xDir;
+			cueball.y += cueball.ySpeed * cueball.yDir;
+		}
+
+	</script>
+</head>
+<body onload="init();">
+	<canvas id="vangogh" width="450" height="300">
+		Canvas is not supported :(
+	</canvas>
+</body>
+</html>
