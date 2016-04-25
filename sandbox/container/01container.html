@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<title>Moving a Container</title>
+
+	<!-- MATERIAL ICONS -->
+	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+
+	<!-- MY CSS -->
+	<style type="text/css">
+		body {
+			background: #333;
+			color: #fff;
+			font-family: "Arial", sans-serif;
+			line-height: 1.5em;
+		}
+
+		#barry {
+			float: left;
+			width: 150px;
+		}
+
+		p {
+			padding: 10px;
+		}
+
+
+		canvas {
+			background: #ccc;
+			border: 1px solid #222;
+		}
+
+		button {
+			width: 130px;
+			margin: 10px;
+			height: 50px;
+		}
+
+	</style>
+
+	<!-- create js links -->
+	<script src="https://code.createjs.com/easeljs-0.8.2.min.js"></script>
+	<script src="https://code.createjs.com/soundjs-0.6.2.min.js"></script>
+	<script src="https://code.createjs.com/tweenjs-0.6.2.min.js"></script>
+	<script src="https://code.createjs.com/preloadjs-0.6.2.min.js"></script>
+
+
+	<!-- MY JAVASCRIPT -->
+	<script>
+		var vangogh;
+		var stage;
+
+		var paused = false;
+
+		var ARROW_LEFT = 37;
+		var ARROW_RIGHT = 39;
+		var ARROW_UP = 38;
+		var ARROW_DOWN = 40;
+
+		var keyW = 87;
+		var keyS = 83;
+		var keyA = 65;
+		var keyD = 68;
+
+		var keyDownRight = false;
+		var keyDownLeft = false;
+		var keyDownUp = false;
+		var keyDownDown = false;
+
+		var wilmer;
+
+
+		// init: called on body load
+		function init() {
+			// STAGE SETUP
+			vangogh = document.getElementById("vangogh");
+			stage = new createjs.Stage( vangogh );
+			setControls();
+
+
+			var body = new createjs.Bitmap("wilmer.png");
+			var hat = new createjs.Bitmap("hat.png");
+			hat.name = "hat";
+			hat.x = 8;
+			hat.y = -5;
+
+			var fruit = new createjs.Bitmap("fruit.png");
+			fruit.name = "fruit";
+			fruit.x = 40;
+			fruit.y = 25;
+
+			var boxy = new createjs.Bitmap("box.png");
+			boxy.name = "box";
+			boxy.x = 38;
+			boxy.y = 25;
+
+			wilmer = new createjs.Container();
+			wilmer.addChild( fruit, body, hat);
+			wilmer.x = wilmer.y = 200;
+			wilmer.speed = 5;
+			stage.addChild(wilmer);
+
+
+			
+
+			// TICKER SETUP
+			createjs.Ticker.setFPS(30);
+			createjs.Ticker.addEventListener("tick", tick);
+		}
+
+		function tick(e){
+
+			if( !paused ){
+				updateWilmer();
+				stage.update();
+			}
+		}
+
+		// USER INTERACTION
+		function setControls(){
+			window.onkeydown = handleKeyDown;
+			window.onkeyup = handleKeyUp;
+			console.log("controls set");
+		}
+
+		function handleKeyDown(e){
+
+			//console.log(e.keyCode);
+
+			switch( e.keyCode ){
+				case ARROW_LEFT:
+				case keyA:
+					keyDownLeft = true;
+					break;
+				case ARROW_RIGHT:
+				case keyD:
+					keyDownRight = true;
+					break;
+				case ARROW_UP:
+				case keyW:
+					keyDownUp = true;
+					break;
+				case ARROW_DOWN:
+				case keyS:
+					keyDownDown = true;
+					break;
+			}
+		}
+
+		function handleKeyUp(e){
+			switch( e.keyCode ){
+				case ARROW_LEFT:
+				case keyA:
+					keyDownLeft = false;
+					break;
+				case ARROW_RIGHT:
+				case keyD:
+					keyDownRight = false;
+					break;
+				case ARROW_UP:
+				case keyW:
+					keyDownUp = false;
+					break;
+				case ARROW_DOWN:
+				case keyS:
+					keyDownDown = false;
+					break;
+			}
+
+		}
+
+		function updateWilmer(){
+			if(keyDownLeft){
+				wilmer.x -= wilmer.speed;
+				wilmer.scaleX = -1;
+			}
+			if(keyDownRight){
+				wilmer.x += wilmer.speed;
+				wilmer.scaleX = 1;
+			}
+			if(keyDownUp){
+				wilmer.y -= wilmer.speed;
+			}
+			if(keyDownDown){
+				wilmer.y += wilmer.speed;
+			}
+		}
+
+		function toggleHat(e){
+			var hatty = wilmer.getChildByName("hat");
+			hatty.alpha = hatty.alpha == 1 ? 0 : 1 ;
+
+		}
+
+		function toggleHold(e){
+			var fruity = wilmer.getChildByName("fruit");
+			fruity.alpha = fruity.alpha == 1 ? 0 : 1 ;
+		}
+
+		function spin(e){
+			createjs.Tween.get(wilmer, {override:true})
+				.to( {rotation:-350}, 3000 );
+			createjs.Tween.get(wilmer)
+				.wait(3010)
+				.to({rotation:0}, 20)
+				.call(function(){
+					console.log("spin");
+				});
+
+		}
+
+	</script>
+
+</head>
+<body onload="init();">
+	<div id="barry">
+		<button id="hat" type="button" onclick="toggleHat();">Toggle Hat</button>
+		<button id="hands" type="button" onclick="toggleHold();">Toggle Hold</button>
+		<button id="hands" type="button" onclick="spin();">Spin
+		</button>
+		<p>Use arrow keys or WASD to move Wilmer around.</p>
+
+	</div>
+
+	<canvas id="vangogh" width="500" height="350">
+		Canvas is not supported :(
+	</canvas>
+
+
+
+</body>
+</html>
