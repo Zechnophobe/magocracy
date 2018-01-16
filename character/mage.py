@@ -110,9 +110,9 @@ class BaseMage(object):
         Pool of stat points to use. If not set will instead generate a random one.
         Initial stats come from on of 4 possible buckets.
         80% of the time you get 20 to 29 points.
-        15% of the time you get 30 to 32
-        4% of the time you get 33 to 34, and
-        1% of the time you get 35 to 38.
+        15% of the time you get 30 to 34
+        4% of the time you get 35 to 39, and
+        1% of the time you get 40 to 44.
         :return:
         """
         if pool is None:
