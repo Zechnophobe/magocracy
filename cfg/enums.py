@@ -10,7 +10,7 @@ class BaseEnum(object):
     def choices(cls):
         things = []
         for attribute in dir(cls):
-            if not attribute.startswith('__') and type(getattr(cls, attribute)) == unicode:
+            if not attribute.startswith('__') and type(getattr(cls, attribute)) == str:
                 things.append(getattr(cls, attribute))
         return things
 

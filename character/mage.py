@@ -2,9 +2,9 @@
 """
 """
 from __future__ import unicode_literals
-from enums import MagicClasses, MagicTypesEnum
-from rand import funcs as random
-from consts import STAT_NORMALIZING_FACTOR
+import rand.funcs as random
+from cfg.consts import STAT_NORMALIZING_FACTOR
+from cfg.enums import *
 
 
 class BaseMage(object):
@@ -23,7 +23,7 @@ class BaseMage(object):
     wisdom = 1  # Harness capacity
     agility = 1  # spells cast on turn
     strength = 1  # Damage stat for attacks
-    Endurance = 1 # How many effects you can maintain
+    endurance = 1 # How many effects you can maintain
     move = 2
 
     # Stat weighting - how likely the character is to get a stat (baseline)
@@ -145,7 +145,7 @@ class BaseMage(object):
 
     @property
     def resistances(self):
-        if self.resistances is None:
+        if self._resistances is None:
             self._resistances = {}
 
         return self._resistances
